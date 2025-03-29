@@ -19,14 +19,18 @@ async def root():
 async def filter_mailjet(request: Request):
     payload = await request.json()
 
+    # Affichage du payload brut
+    print(f"📨 Payload brut reçu : {payload}")
+
+    # Lecture des infos éventuelles
     event_campaign_id = str(payload.get('CampaignID'))
     event_type = payload.get('Event')
 
     print(f"📩 Reçu événement : {event_type} pour CampaignID : {event_campaign_id}")
 
+    # Vérification et forward
     if event_campaign_id in TARGET_CAMPAIGN_IDS:
         print(f"✅ CampaignID autorisé → Forward vers Make")
-        # Transmet l'événement vers Make
         async with httpx.AsyncClient() as client:
             try:
                 response = await client.post(MAKE_WEBHOOK_URL, json=payload)
