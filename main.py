@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, HTTPException
 import os
 from dotenv import load_dotenv
 import httpx
+import uvicorn
 
 load_dotenv()
 
@@ -38,3 +39,7 @@ async def filter_mailjet(request: Request):
             "status": "ignored",
             "campaign_id": event_campaign_id
         }
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))  # IMPORTANT POUR RAILWAY
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
