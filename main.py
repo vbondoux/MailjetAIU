@@ -22,9 +22,9 @@ async def filter_mailjet(request: Request):
     # Affichage du payload brut
     print(f"📨 Payload brut reçu : {payload}")
 
-    # Lecture des infos éventuelles
-    event_campaign_id = str(payload.get('CampaignID'))
-    event_type = payload.get('Event')
+    # Lecture des infos correctes
+    event_campaign_id = str(payload.get('mj_campaign_id'))
+    event_type = payload.get('event')
 
     print(f"📩 Reçu événement : {event_type} pour CampaignID : {event_campaign_id}")
 
