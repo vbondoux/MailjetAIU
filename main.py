@@ -8,7 +8,7 @@ load_dotenv()
 app = FastAPI()
 
 MAKE_WEBHOOK_URL = os.getenv('MAKE_WEBHOOK_URL')
-TARGET_CUSTOM_ID = os.getenv('TARGET_CUSTOM_ID')
+TARGET_CUSTOM_IDS = os.getenv('TARGET_CUSTOM_IDS', "").split(",")
 
 @app.get("/")
 async def root():
@@ -18,16 +18,17 @@ async def root():
 async def filter_mailjet(request: Request):
     payload = await request.json()
 
-    # Exemple pour CustomID, adapte à CampaignID si besoin
     event_custom_id = payload.get('CustomID')
-    
-    if event_custom_id == TARGET_CUSTOM_ID:
+
+    if event_custom_id in TARGET_CUSTOM_IDS:
         # Transmet l'événement vers Make
         async with httpx.AsyncClient() as client:
-            response = await client.post(MAKE_WEBHOOK_URL, json=payload)
-            response.raise_for_status()
+            try:
+                response = await client.post(MAKE_WEBHOOK_URL, json=payload)
+                response.raise_for_status()
+            except httpx.HTTPError as e:
+                raise HTTPException(status_code=500, detail=f"Erreur en envoyant vers Make: {str(e)}")
 
-        return {"status": "forwarded to Make"}
+        return {"status": "forwarded to Make", "custom_id": event_custom_id}
     else:
-        # Ignore l'événement
-        return {"status": "ignored"}
+        return {"status": "ignored", "custom_id": event_custom_id}
