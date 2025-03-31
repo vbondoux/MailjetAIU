@@ -88,7 +88,7 @@ def log_event_to_airtable(mailing_id, event_type, email, url):
     if url:
         fields["URL"] = url
 
-    airtable_client.insert(AIRTABLE_TABLE, fields)
+    airtable_client.insert(fields)
     
     print(f"✅ Événement ajouté dans Airtable : {fields}")
 
