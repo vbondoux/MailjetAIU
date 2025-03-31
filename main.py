@@ -17,7 +17,8 @@ TARGET_CUSTOM_CAMPAIGNS = os.getenv('TARGET_CUSTOM_CAMPAIGNS', "").split(",")
 AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
 AIRTABLE_API_KEY = os.getenv("AIRTABLE_API_KEY")
 AIRTABLE_TABLE = os.getenv("AIRTABLE_TABLE")
-airtable_client = airtable.Airtable(AIRTABLE_BASE_ID, AIRTABLE_API_KEY)
+airtable_client = airtable.Airtable(AIRTABLE_BASE_ID, AIRTABLE_TABLE, AIRTABLE_API_KEY)
+
 
 # WebSocket clients
 clients = set()
@@ -88,6 +89,7 @@ def log_event_to_airtable(mailing_id, event_type, email, url):
         fields["URL"] = url
 
     airtable_client.insert(AIRTABLE_TABLE, fields)
+    
     print(f"✅ Événement ajouté dans Airtable : {fields}")
 
 # ➤ Graph Data Endpoint
